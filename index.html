@@ -3,23 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello World</title>
+  <title>My Web App</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
       font-family: system-ui, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       min-height: 100vh;
-      margin: 0;
       background: #f0f0f0;
-    }
-    h1 {
       color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: #4a90d9;
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    section h2 {
+      margin-bottom: 1rem;
+      color: #4a90d9;
+    }
+    section p {
+      margin-bottom: 0.75rem;
+    }
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    li {
+      margin-bottom: 0.4rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: #777;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <h1>Hello, World!</h1>
+  <header>
+    <h1>My Web App</h1>
+    <p>A modern web application built with HTML &amp; CSS</p>
+  </header>
+
+  <div class="container">
+    <section>
+      <h2>About</h2>
+      <p>Welcome to My Web App — a lightweight, responsive web application designed for simplicity and performance. This project demonstrates core front-end development concepts and best practices.</p>
+    </section>
+
+    <section>
+      <h2>Features</h2>
+      <ul>
+        <li>Responsive layout that works on desktop and mobile</li>
+        <li>Clean, modern user interface</li>
+        <li>Fast loading with minimal dependencies</li>
+        <li>Easy to extend and customize</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Get Started</h2>
+      <p>Open the project in your favorite editor and start modifying <code>index.html</code>. The page auto-reloads as you make changes — perfect for rapid prototyping.</p>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>Have questions or suggestions? Reach out to the development team or contribute on GitHub.</p>
+    </section>
+  </div>
+
+  <footer>
+    &copy; 2026 My Web App. Built with care.
+  </footer>
 </body>
 </html>
