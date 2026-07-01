@@ -63,6 +63,75 @@
       color: #777;
       font-size: 0.9rem;
     }
+
+    .q-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+    }
+    .q-fab-toggle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: #f4a6b0;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .q-fab-toggle:hover {
+      background: #f08a96;
+    }
+    .q-fab-toggle svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+    }
+    .q-form {
+      position: absolute;
+      bottom: 68px;
+      right: 0;
+      width: 300px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+      display: none;
+    }
+    .q-form.open {
+      display: block;
+    }
+    .q-form textarea {
+      width: 100%;
+      min-height: 90px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .q-form .q-submit {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px;
+      background: #f4a6b0;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .q-form .q-submit:hover {
+      background: #f08a96;
+    }
   </style>
 </head>
 <body>
@@ -101,5 +170,50 @@
   <footer>
     &copy; 2026 My Web App. Built with care.
   </footer>
+
+  <div class="q-fab">
+    <button class="q-fab-toggle" id="qToggle" aria-label="Ask a question">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+    </button>
+    <div class="q-form" id="qForm">
+      <textarea id="qInput" placeholder="Type your question..."></textarea>
+      <button class="q-submit" id="qSubmit">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('qToggle')
+    const form = document.getElementById('qForm')
+    const submit = document.getElementById('qSubmit')
+    const input = document.getElementById('qInput')
+    let count = 0
+
+    const angel = `<svg viewBox="0 0 24 24"><ellipse cx="8" cy="12" rx="3" ry="7" fill="#fff" transform="rotate(-25 8 12)"/><ellipse cx="16" cy="12" rx="3" ry="7" fill="#fff" transform="rotate(25 16 12)"/><circle cx="12" cy="8" r="3" fill="#fff"/><rect x="10" y="11" width="4" height="7" rx="2" fill="#fff"/><ellipse cx="12" cy="3.5" rx="4.5" ry="1" fill="#ffe066" opacity="0.95"/></svg>`
+
+    const icons = [
+      `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
+      `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
+      `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>`,
+      `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
+      `<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
+      `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14H10c-1.1 0-2-.9-2-2V7h2v7h6.5v2z"/></svg>`
+    ]
+
+    toggle.addEventListener('click', () => {
+      form.classList.toggle('open')
+    })
+
+    submit.addEventListener('click', () => {
+      if (!input.value.trim()) return
+      count++
+      form.classList.remove('open')
+      input.value = ''
+      if (count === 1) {
+        toggle.innerHTML = angel
+      } else {
+        toggle.innerHTML = icons[Math.floor(Math.random() * icons.length)]
+      }
+    })
+  </script>
 </body>
 </html>
