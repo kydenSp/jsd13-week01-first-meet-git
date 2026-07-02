@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Web App</title>
+  <title>Global Bites Restaurant — Menu</title>
   <style>
     * {
       margin: 0;
@@ -13,54 +13,89 @@
     body {
       font-family: system-ui, sans-serif;
       min-height: 100vh;
-      background: #f0f0f0;
-      color: #333;
+      background: #fcf0f5;
+      color: #555;
       line-height: 1.6;
     }
     header {
-      background: #4a90d9;
-      color: #fff;
-      padding: 2rem;
+      background: linear-gradient(135deg, #f8c8dc, #c1f0c1);
+      color: #555;
+      padding: 2.5rem 2rem;
       text-align: center;
+      border-bottom: 3px solid #f0b0c8;
     }
     header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+      font-size: 2.8rem;
+      margin-bottom: 0.3rem;
+      letter-spacing: 1px;
     }
     header p {
       font-size: 1.1rem;
-      opacity: 0.9;
+      opacity: 0.8;
     }
     .container {
-      max-width: 800px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 2rem;
     }
-    section {
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .menu-card {
       background: #fff;
-      border-radius: 8px;
-      padding: 1.5rem 2rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(248, 200, 220, 0.3);
+      transition: transform 0.2s;
     }
-    section h2 {
-      margin-bottom: 1rem;
-      color: #4a90d9;
+    .menu-card:hover {
+      transform: translateY(-4px);
     }
-    section p {
-      margin-bottom: 0.75rem;
+    .menu-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
     }
-    ul {
-      padding-left: 1.5rem;
-      margin-bottom: 0.75rem;
+    .menu-card .info {
+      padding: 1.2rem 1.5rem 1.5rem;
     }
-    li {
-      margin-bottom: 0.4rem;
+    .menu-card .info h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+      color: #333;
+    }
+    .menu-card .info .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .menu-card .info .meta span {
+      font-size: 0.85rem;
+      color: #999;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge.veg {
+      background: #c1f0c1;
+      color: #3a7a3a;
+    }
+    .badge.nonveg {
+      background: #f8c8dc;
+      color: #a05060;
     }
     footer {
       text-align: center;
-      padding: 1.5rem;
-      color: #777;
+      padding: 2rem;
+      color: #bbb;
       font-size: 0.9rem;
     }
 
@@ -75,23 +110,23 @@
       height: 56px;
       border-radius: 50%;
       border: none;
-      background: #f4a6b0;
-      color: #fff;
+      background: #f8c8dc;
+      color: #555;
       font-size: 24px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 12px rgba(248, 200, 220, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
       transition: background 0.2s;
     }
     .q-fab-toggle:hover {
-      background: #f08a96;
+      background: #f0b0c8;
     }
     .q-fab-toggle svg {
       width: 26px;
       height: 26px;
-      fill: #fff;
+      fill: #555;
     }
     .q-form {
       position: absolute;
@@ -101,7 +136,7 @@
       background: #fff;
       border-radius: 12px;
       padding: 16px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+      box-shadow: 0 8px 28px rgba(248, 200, 220, 0.3);
       display: none;
     }
     .q-form.open {
@@ -111,18 +146,19 @@
       width: 100%;
       min-height: 90px;
       padding: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid #f0d0e0;
       border-radius: 8px;
       resize: vertical;
       font-family: inherit;
       font-size: 14px;
+      color: #555;
     }
     .q-form .q-submit {
       margin-top: 10px;
       width: 100%;
       padding: 8px;
-      background: #f4a6b0;
-      color: #fff;
+      background: #c1f0c1;
+      color: #3a7a3a;
       border: none;
       border-radius: 8px;
       font-size: 14px;
@@ -130,45 +166,22 @@
       transition: background 0.2s;
     }
     .q-form .q-submit:hover {
-      background: #f08a96;
+      background: #a8e6a8;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>My Web App</h1>
-    <p>A modern web application built with HTML &amp; CSS</p>
+    <h1>Global Bites</h1>
+    <p>Authentic flavors from around the world</p>
   </header>
 
   <div class="container">
-    <section>
-      <h2>About</h2>
-      <p>Welcome to My Web App — a lightweight, responsive web application designed for simplicity and performance. This project demonstrates core front-end development concepts and best practices.</p>
-    </section>
-
-    <section>
-      <h2>Features</h2>
-      <ul>
-        <li>Responsive layout that works on desktop and mobile</li>
-        <li>Clean, modern user interface</li>
-        <li>Fast loading with minimal dependencies</li>
-        <li>Easy to extend and customize</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Get Started</h2>
-      <p>Open the project in your favorite editor and start modifying <code>index.html</code>. The page auto-reloads as you make changes — perfect for rapid prototyping.</p>
-    </section>
-
-    <section>
-      <h2>Contact</h2>
-      <p>Have questions or suggestions? Reach out to the development team or contribute on GitHub.</p>
-    </section>
+    <div class="menu-grid" id="menuGrid"></div>
   </div>
 
   <footer>
-    &copy; 2026 My Web App. Built with care.
+    &copy; 2026 Global Bites Restaurant. Taste the world.
   </footer>
 
   <div class="q-fab">
@@ -181,14 +194,17 @@
     </div>
   </div>
 
+  <script src="my-object.js"></script>
   <script>
+    renderMenu('menuGrid')
+
     const toggle = document.getElementById('qToggle')
     const form = document.getElementById('qForm')
     const submit = document.getElementById('qSubmit')
     const input = document.getElementById('qInput')
     let count = 0
 
-    const angel = `<svg viewBox="0 0 24 24"><ellipse cx="8" cy="12" rx="3" ry="7" fill="#fff" transform="rotate(-25 8 12)"/><ellipse cx="16" cy="12" rx="3" ry="7" fill="#fff" transform="rotate(25 16 12)"/><circle cx="12" cy="8" r="3" fill="#fff"/><rect x="10" y="11" width="4" height="7" rx="2" fill="#fff"/><ellipse cx="12" cy="3.5" rx="4.5" ry="1" fill="#ffe066" opacity="0.95"/></svg>`
+    const angel = `<svg viewBox="0 0 24 24"><ellipse cx="8" cy="12" rx="3" ry="7" fill="#555" transform="rotate(-25 8 12)"/><ellipse cx="16" cy="12" rx="3" ry="7" fill="#555" transform="rotate(25 16 12)"/><circle cx="12" cy="8" r="3" fill="#555"/><rect x="10" y="11" width="4" height="7" rx="2" fill="#555"/><ellipse cx="12" cy="3.5" rx="4.5" ry="1" fill="#f8c8dc" opacity="0.95"/></svg>`
 
     const icons = [
       `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
