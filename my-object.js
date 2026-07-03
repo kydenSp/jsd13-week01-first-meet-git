@@ -388,6 +388,22 @@ function setupOrderSystem() {
                 orderQuantities[id] = (orderQuantities[id] || 0) + 1;
                 updateBadge();
 
+                const rect = btn.getBoundingClientRect();
+                const floating = document.createElement('div');
+                floating.textContent = '+1';
+                Object.assign(floating.style, {
+                    position:'fixed', left:rect.left+rect.width/2-12+'px',
+                    top:rect.top-10+'px', fontSize:'18px', fontWeight:'700',
+                    color:'#3a7a3a', pointerEvents:'none', zIndex:'9999',
+                    transition:'all 0.8s ease-out', opacity:'1'
+                });
+                document.body.appendChild(floating);
+                requestAnimationFrame(() => {
+                    floating.style.transform = 'translateY(-40px)';
+                    floating.style.opacity = '0';
+                });
+                setTimeout(() => floating.remove(), 900);
+
                 const orderToggle = document.getElementById('orderToggle');
                 if (orderToggle) {
                     orderToggle.style.transform = 'scale(1.2)';
@@ -401,7 +417,50 @@ function setupOrderSystem() {
     orderToggle.addEventListener('click', () => {
         const total = Object.values(orderQuantities).reduce((s, v) => s + v, 0);
         if (total === 0) {
-            alert('Please select at least one item first!');
+            const overlay = document.createElement('div');
+            overlay.className = 'empty-cart-overlay';
+            overlay.innerHTML = `
+                <div class="empty-cart-box">
+                    <h2 style="font-size:2rem;color:#e05060;margin:0 0 0.5rem;">NO NO NO NO NO NO!</h2>
+                    <img src="https://pbs.twimg.com/media/FPRWH78aMAMISPq?format=jpg&name=900x900" alt="no no no" style="display:block;max-width:100%;max-height:220px;border-radius:12px;object-fit:contain;margin:0 auto;">
+                    <button class="surprise-btn" style="margin-top:1rem;">OK</button>
+                </div>
+            `;
+            Object.assign(overlay.style, {
+                position:'fixed', inset:'0', background:'rgba(0,0,0,0.4)', backdropFilter:'blur(4px)',
+                zIndex:'3000', display:'flex', alignItems:'center', justifyContent:'center',
+                opacity:'0', transition:'opacity 0.3s'
+            });
+            const box = overlay.querySelector('.empty-cart-box');
+            Object.assign(box.style, {
+                background:'#fff', borderRadius:'20px', padding:'2rem', maxWidth:'400px',
+                width:'90%', textAlign:'center', boxShadow:'0 12px 40px rgba(0,0,0,0.15)',
+                transform:'scale(0.9)', transition:'transform 0.3s'
+            });
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+                box.style.transform = 'scale(1)';
+            });
+            overlay.querySelector('button').addEventListener('click', () => {
+                overlay.style.opacity = '0';
+                box.style.transform = 'scale(0.9)';
+                setTimeout(() => overlay.remove(), 300);
+            });
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.style.opacity = '0';
+                    box.style.transform = 'scale(0.9)';
+                    setTimeout(() => overlay.remove(), 300);
+                }
+            });
+            // Dark mode support
+            if (document.body.classList.contains('dark-mode')) {
+                box.style.background = '#161b36';
+                box.style.color = '#b8c4d8';
+                const h2 = box.querySelector('h2');
+                if (h2) h2.style.color = '#e8849a';
+            }
             return;
         }
         updateSummaryModal();
@@ -554,6 +613,253 @@ function showDetail(item) {
     });
 }
 
+function buildSummaryModal() {
+    if (document.getElementById('summaryModal')) return;
+    const html = `
+    <div class="order-modal" id="summaryModal">
+        <div class="order-modal-content" style="max-height:520px;">
+            <div class="order-modal-header" style="background:linear-gradient(135deg,#c1f0c1,#a8e6a8);">
+                <h2>&#128203; Your Confirmed Order Review</h2>
+                <button class="close-btn" id="closeSummaryModal">&times;</button>
+            </div>
+            <div class="order-modal-body">
+                <p class="reservation-info">Reserved under: <strong id="reviewReserveName"></strong> &middot; <span id="reviewSeats">1</span> seat(s)</p>
+                <div class="review-items-list" id="reviewItemsList"></div>
+                <div class="review-total-row">
+                    <span>Total Price:</span>
+                    <strong id="reviewTotal"></strong>
+                </div>
+                <div class="review-deposit-row">
+                    <span>50% Deposit Due:</span>
+                    <strong id="reviewDeposit"></strong>
+                </div>
+            </div>
+            <div class="order-modal-footer">
+                <button class="confirm-order-btn" id="proceedToPaymentBtn" style="width:100%;background:#3a7a3a;">Proceed to Payment</button>
+            </div>
+        </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function buildPaymentModal() {
+    if (document.getElementById('paymentModal')) return;
+    const html = `
+    <div class="order-modal" id="paymentModal">
+        <div class="order-modal-content" style="max-height:520px;">
+            <div class="order-modal-header">
+                <h2>Reservation Deposit</h2>
+                <button class="close-btn" id="closePaymentModal">&times;</button>
+            </div>
+            <div class="order-modal-body" style="padding:1.5rem;">
+                <div class="input-group" style="margin-bottom:1.2rem;">
+                    <label for="reserveName" style="display:block;font-weight:600;margin-bottom:0.5rem;color:#555;">Reserved Name:</label>
+                    <input type="text" id="reserveName" placeholder="Enter your name" style="width:100%;padding:10px;border:1px solid #f0d0e0;border-radius:8px;font-family:inherit;font-size:14px;color:#555;">
+                </div>
+                <div class="input-group" style="margin-bottom:1.2rem;">
+                    <label style="display:block;font-weight:600;margin-bottom:0.5rem;color:#555;">Reserved Seats:</label>
+                    <div class="seat-counter">
+                        <button class="seat-btn" id="seatDec">&minus;</button>
+                        <span class="seat-num" id="seatNum">1</span>
+                        <button class="seat-btn" id="seatInc">+</button>
+                    </div>
+                </div>
+                <div class="deposit-summary" style="background:#fdf2f6;border-radius:12px;padding:1rem;margin-bottom:1.2rem;border:1px solid #f8c8dc;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;font-size:0.9rem;">
+                        <span>Total Amount:</span>
+                        <strong id="depositTotal">$0.00</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;color:#3a7a3a;font-weight:700;font-size:1.1rem;">
+                        <span>50% Deposit Due:</span>
+                        <strong id="depositAmount">$0.00</strong>
+                    </div>
+                </div>
+                <div class="fake-bank-details" style="border:1px dashed #c1f0c1;background:#fcfbfd;padding:1rem;border-radius:12px;font-size:0.85rem;text-align:center;color:#666;">
+                    <p style="font-weight:600;color:#3a7a3a;margin-bottom:0.5rem;">&#128184; Payment Deposit &#128184;</p>
+                    <p>Bank: <strong>Kydeniel restulre</strong></p>
+                    <p>Account Number: <strong>000-000-000-000</strong></p>
+                    <p style="margin-top:0.5rem;font-size:0.75rem;color:#999;">Scan or transfer exactly 50% to reserve your dishes!</p>
+                </div>
+            </div>
+            <div class="order-modal-footer">
+                <button class="confirm-order-btn" id="completePaymentBtn" style="width:100%;background:#3a7a3a;">Complete Deposit &amp; Order</button>
+            </div>
+        </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function buildThankYouModal() {
+    if (document.getElementById('thankYouModal')) return;
+    const html = `
+    <div class="order-modal" id="thankYouModal">
+        <div class="order-modal-content" style="max-height:480px;text-align:center;">
+            <div class="order-modal-header" style="background:linear-gradient(135deg,#c1f0c1,#a8e6a8);">
+                <h2>Order Confirmed!</h2>
+                <button class="close-btn" id="closeThankYouModal">&times;</button>
+            </div>
+            <div class="order-modal-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;">
+                <h3 style="color:#3a7a3a;margin-bottom:1rem;font-size:1.3rem;">Thank you for paying for me ka eiei &#128536;</h3>
+                <div id="thankYouImages" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:100%;"></div>
+            </div>
+            <div class="order-modal-footer" style="justify-content:center;">
+                <button class="confirm-order-btn" id="finishThankYouBtn" style="background:#3a7a3a;padding:10px 40px;">Close</button>
+            </div>
+        </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function setupShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.order-modal.open, .surprise-overlay.open, .detail-overlay.open').forEach(el => el.classList.remove('open'));
+            const emptyOverlay = document.querySelector('.empty-cart-overlay');
+            if (emptyOverlay) emptyOverlay.remove();
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && !e.target.closest('input,textarea')) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const instruct = document.querySelector('.hero-instruct');
+            if (instruct) {
+                instruct.style.transform = 'scale(1.05)';
+                setTimeout(() => instruct.style.transform = '', 300);
+            }
+        }
+    });
+}
+
+function buildScrollTop() {
+    const btn = document.createElement('button');
+    btn.id = 'scrollTopBtn';
+    btn.innerHTML = '&#9650;';
+    btn.setAttribute('aria-label', 'Scroll to top');
+    Object.assign(btn.style, {
+        position:'fixed', bottom:'90px', right:'24px', zIndex:'999',
+        width:'44px', height:'44px', borderRadius:'50%',
+        background:'#f8c8dc', color:'#a05060', border:'none',
+        fontSize:'20px', cursor:'pointer', display:'none',
+        boxShadow:'0 2px 8px rgba(0,0,0,0.15)',
+        transition:'opacity 0.3s'
+    });
+    document.body.appendChild(btn);
+    window.addEventListener('scroll', () => {
+        btn.style.display = window.scrollY > 400 ? 'block' : 'none';
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+function buildFooter() {
+    if (document.querySelector('footer')) return;
+    const footer = document.createElement('footer');
+    footer.innerHTML = '&copy; 2026 Kyden\'s Kitchen. Taste the world.';
+    document.body.appendChild(footer);
+}
+
+function injectDarkCSS() {
+    if (document.getElementById('dynamicDarkCSS')) return;
+    const css = document.createElement('style');
+    css.id = 'dynamicDarkCSS';
+    css.textContent = `
+body.dark-mode { background:#0a0e27; color:#b8c4d8; }
+body.dark-mode header { background:linear-gradient(135deg,#1a1f3a,#121638); border-bottom-color:#2a2f4a; }
+body.dark-mode header h1 { color:#a8b8e0; text-shadow:2px 2px 4px rgba(0,0,0,0.4); }
+body.dark-mode header p { color:#7a8aaa; }
+body.dark-mode header .hero-instruct { color:#a8b8e0; border-color:#a8b8e0; background:rgba(26,31,58,0.6); box-shadow:0 0 0 3px rgba(168,184,224,0.2); }
+body.dark-mode .hero-surprise { border-color:#a8b8e0; background:#1a2f4a; color:#a8b8e0; }
+body.dark-mode .hero-surprise:hover { background:#2a3f5a; }
+body.dark-mode .menu-card { background:#161b36; box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+body.dark-mode .menu-card .info h3 { color:#c8d4e8; }
+body.dark-mode .menu-card .info .meta span { color:#7a8aaa; }
+body.dark-mode .price { color:#e8849a; }
+body.dark-mode .badge.veg { background:#1a3a2a; color:#6ac48a; }
+body.dark-mode .badge.nonveg { background:#3a1a2a; color:#e8849a; }
+body.dark-mode .details { border-top-color:#2a2f4a; }
+body.dark-mode .ingredients-list { color:#7a8aaa; }
+body.dark-mode .ingredients-list strong { color:#e8849a; }
+body.dark-mode .backstory-text { color:#7a8aaa; }
+body.dark-mode .backstory-text strong { color:#6ac48a; }
+body.dark-mode .backstory-text p { color:#6a7a9a; }
+body.dark-mode .card-footer { border-top-color:#2a2f4a; }
+body.dark-mode .action-btn { color:#7a8aaa; }
+body.dark-mode .action-btn:hover { color:#e8849a; background:#1e2340; }
+body.dark-mode .action-btn.like-btn.active { color:#ff6b7a; background:#2a1a2a; }
+body.dark-mode .action-btn.bookmark-btn.active { color:#ffb840; background:#2a2a1a; }
+body.dark-mode .order-fab-toggle { background:#1a2f4a; color:#7ab8e0; box-shadow:0 4px 12px rgba(0,0,0,0.4); }
+body.dark-mode .order-fab-toggle:hover { background:#1a3f5a; }
+body.dark-mode .q-fab-toggle { background:#1e2340; color:#a8b8e0; box-shadow:0 4px 12px rgba(0,0,0,0.4); }
+body.dark-mode .q-fab-toggle:hover { background:#2a2f4a; }
+body.dark-mode .order-modal-content { background:#161b36; box-shadow:0 12px 40px rgba(0,0,0,0.5); }
+body.dark-mode .order-modal-header { background:linear-gradient(135deg,#1a1f3a,#2a1a2a); }
+body.dark-mode .order-modal-header h2 { color:#a8b8e0; }
+body.dark-mode .close-btn { color:#7a8aaa; }
+body.dark-mode .close-btn:hover { color:#e8849a; }
+body.dark-mode .order-modal-footer { background:#121638; border-top-color:#2a2f4a; }
+body.dark-mode .total-section span { color:#7a8aaa; }
+body.dark-mode .total-section .total-price { color:#6ac48a; }
+body.dark-mode .dark-toggle { border-color:#a8b8e0; background:#1a1f3a; color:#a8b8e0; }
+body.dark-mode .dark-toggle:hover { background:#a8b8e0; color:#0a0e27; }
+body.dark-mode footer { color:#4a5a7a; }
+body.dark-mode .surprise-btn { border-color:#a8b8e0; background:#1a1f3a; color:#a8b8e0; }
+body.dark-mode .surprise-btn:hover { background:#a8b8e0; color:#0a0e27; }
+body.dark-mode .surprise-content { background:#161b36; }
+body.dark-mode .surprise-content h2 { color:#c8d4e8; }
+body.dark-mode .surprise-content p { color:#7a8aaa; }
+body.dark-mode .surprise-input { background:#0a0e27; border-color:#2a2f4a; color:#b8c4d8; }
+body.dark-mode .surprise-input:focus { border-color:#a8b8e0; }
+body.dark-mode .surprise-submit { background:#a8b8e0; color:#0a0e27; }
+body.dark-mode .detail-content { background:#161b36; }
+body.dark-mode .detail-body h2 { color:#c8d4e8; }
+body.dark-mode .detail-cuisine { color:#7a8aaa; }
+body.dark-mode .detail-price { color:#e8849a; }
+body.dark-mode .detail-section strong { color:#e8849a; }
+body.dark-mode .detail-section p { color:#7a8aaa; }
+body.dark-mode .detail-close { background:rgba(22,27,54,0.9); color:#7a8aaa; }
+body.dark-mode .detail-close:hover { background:#1a1f3a; color:#e8849a; }
+body.dark-mode .empty-cart-box { background:#161b36; color:#b8c4d8; }
+body.dark-mode .empty-cart-box h2 { color:#e8849a; }
+body.dark-mode #scrollTopBtn { background:#2a2f4a; color:#c8c8e0; }
+body.dark-mode .seat-btn { background:#0a0e27; border-color:#6ac48a; color:#6ac48a; }
+body.dark-mode .seat-btn:hover { background:#6ac48a; color:#0a0e27; }
+body.dark-mode .seat-num { color:#c8d4e8; }
+body.dark-mode #menuSearch { background:#161b36; border-color:#2a2f4a; color:#b8c4d8; }
+body.dark-mode #menuSearch:focus { border-color:#5060a0; box-shadow:0 0 0 3px rgba(80,96,160,0.3) !important; }
+body.dark-mode #bookmarkContent > div > div { background:#1a1f3a !important; border-color:#2a2f4a !important; }
+body.dark-mode #bookmarkContent > div > div strong { color:#c8d4e8; }
+body.dark-mode #bookmarkContent > div > div span { color:#7a8aaa !important; }
+body.dark-mode #viewSavedBtn:hover { background:#2a2f4a !important; }
+`;
+    document.head.appendChild(css);
+}
+
+function injectLightCSS() {
+    if (document.getElementById('lightCSS')) return;
+    const css = document.createElement('style');
+    css.id = 'lightCSS';
+    css.textContent = `
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge.veg {
+      background: #c1f0c1;
+      color: #3a7a3a;
+    }
+    .badge.nonveg {
+      background: #f8c8dc;
+      color: #a05060;
+    }
+    `;
+    document.head.insertBefore(css, document.head.firstChild);
+}
+
 function setupSurprise() {
     const modal = document.getElementById('surpriseModal');
     const stage = document.getElementById('surpriseStage');
@@ -597,7 +903,7 @@ function setupSurprise() {
                     <h2>SURPRISEEEE &#129321;</h2>
                     <img class="surprise-img" src="https://pbs.twimg.com/media/HL691HdWgAEiPfh?format=jpg&name=900x900" alt="surprise">
                     <p>Thank you for playing with me &#128525;</p>
-                    <p>ODER OUR RESTUARANT???? &#128299;</p>
+                    <p>ORDER OUR RESTAURANT???? &#128299;</p>
                     <button class="surprise-btn" id="sClose2" style="margin-top:1rem;">Close</button>
                 `);
                 document.getElementById('sClose2').addEventListener('click', () => modal.classList.remove('open'));
@@ -608,4 +914,88 @@ function setupSurprise() {
     // Wire header surprise button
     const heroBtn = document.getElementById('heroSurprise');
     if (heroBtn) heroBtn.addEventListener('click', openModal);
+}
+
+function buildSearchInput() {
+    const container = document.querySelector('.container');
+    const grid = document.getElementById('menuGrid');
+    if (!container || !grid) return;
+    if (document.getElementById('menuSearch')) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;margin-bottom:1.5rem;animation:fadeIn 0.3s ease;';
+    const input = document.createElement('input');
+    input.id = 'menuSearch';
+    input.type = 'text';
+    input.placeholder = '🔍 Search dishes, cuisines...';
+    Object.assign(input.style, {
+        width:'100%', padding:'12px 44px 12px 16px', border:'2px solid #f8c8dc',
+        borderRadius:'12px', fontFamily:'inherit', fontSize:'15px',
+        outline:'none', color:'#555', background:'#fff',
+        transition:'border-color 0.3s, box-shadow 0.3s'
+    });
+    wrap.appendChild(input);
+
+    const savedBtn = document.createElement('button');
+    savedBtn.id = 'viewSavedBtn';
+    savedBtn.textContent = '📁';
+    savedBtn.title = 'View saved items';
+    Object.assign(savedBtn.style, {
+        position:'absolute', right:'6px', top:'50%', transform:'translateY(-50%)',
+        border:'none', background:'transparent', cursor:'pointer',
+        fontSize:'20px', padding:'6px 8px', borderRadius:'8px', lineHeight:'1'
+    });
+    savedBtn.addEventListener('mouseenter', () => { savedBtn.style.background = '#f8c8dc'; });
+    savedBtn.addEventListener('mouseleave', () => { savedBtn.style.background = 'transparent'; });
+    wrap.appendChild(savedBtn);
+    container.insertBefore(wrap, grid);
+
+    input.addEventListener('input', function() {
+        const q = this.value.toLowerCase().trim();
+        document.querySelectorAll('.menu-card').forEach(card => {
+            const name = card.querySelector('h3')?.textContent?.toLowerCase() || '';
+            const meta = card.querySelector('.left-meta span')?.textContent?.toLowerCase() || '';
+            card.style.display = (!q || name.includes(q) || meta.includes(q)) ? '' : 'none';
+        });
+    });
+    input.addEventListener('focus', () => { input.style.borderColor = '#f0a0b8'; input.style.boxShadow = '0 0 0 3px rgba(248,200,220,0.3)'; });
+    input.addEventListener('blur', () => { input.style.borderColor = '#f8c8dc'; input.style.boxShadow = 'none'; });
+
+    return savedBtn;
+}
+
+function buildBookmarkViewer(savedBtn) {
+    if (document.getElementById('bookmarkModal')) return;
+    if (!savedBtn) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'detail-overlay';
+    modal.id = 'bookmarkModal';
+    modal.innerHTML = '<div class="detail-content" id="bookmarkContent"></div>';
+    document.body.appendChild(modal);
+
+    savedBtn.addEventListener('click', () => {
+        const saved = document.querySelectorAll('.bookmark-btn.active');
+        const content = document.getElementById('bookmarkContent');
+        if (saved.length === 0) {
+            content.innerHTML = '<h2 style="text-align:center;margin:2rem 0 3rem;">📁 No saved items yet</h2><button class="detail-close">Close</button>';
+        } else {
+            let html = '<h2 style="text-align:center;margin-bottom:1.5rem;">📁 Saved Items</h2><div style="display:grid;gap:1rem;">';
+            saved.forEach(el => {
+                const card = el.closest('.menu-card');
+                if (!card) return;
+                const img = card.querySelector('img');
+                const title = card.querySelector('h3');
+                const price = card.querySelector('.price');
+                html += `<div style="display:flex;align-items:center;gap:1rem;background:#fcf0f5;border-radius:12px;padding:0.8rem;border:1px solid #f8c8dc;">
+                    <img src="${img?.src || ''}" alt="" style="width:60px;height:60px;border-radius:8px;object-fit:cover;">
+                    <div style="flex:1;"><strong>${title?.textContent || ''}</strong><br><span style="color:#888;">${price?.textContent || ''}</span></div>
+                </div>`;
+            });
+            html += '</div><button class="detail-close">Close</button>';
+            content.innerHTML = html;
+        }
+        modal.classList.add('open');
+        content.querySelector('.detail-close').addEventListener('click', () => modal.classList.remove('open'));
+        modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+    });
 }
