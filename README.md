@@ -1,4 +1,4 @@
-# Global Bites Restaurant
+# Kyden's Kitchen
 
 A world-cuisine restaurant bringing authentic flavors from across the globe to your table. From Italian classics to Thai street food, our menu features hand-picked dishes crafted with traditional recipes and fresh ingredients.
 

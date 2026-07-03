@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Global Bites Restaurant — Menu</title>
+  <title>Kyden's Kitchen — Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Reddit+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -11,7 +14,7 @@
       box-sizing: border-box;
     }
     body {
-      font-family: system-ui, sans-serif;
+      font-family: 'Reddit Sans', system-ui, sans-serif;
       min-height: 100vh;
       background: #fcf0f5;
       color: #555;
@@ -25,6 +28,7 @@
       border-bottom: 3px solid #f0b0c8;
     }
     header h1 {
+      font-family: 'Berkshire Swash', serif;
       font-size: 2.8rem;
       margin-bottom: 0.3rem;
       letter-spacing: 1px;
@@ -448,20 +452,142 @@
     .confirm-order-btn:active {
       transform: translateY(1px);
     }
+
+    /* Circle baby yellow button styling */
+    .order-btn-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #ffe89e;
+      background-color: #fffde6; /* baby yellow */
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      outline: none;
+    }
+    .order-btn-circle:hover {
+      background-color: #fff9b3;
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .order-btn-circle:active {
+      transform: scale(0.95);
+    }
+
+    /* Confirmed Order Review Section styling */
+    .confirmed-order-container {
+      max-width: 600px;
+      margin: 1.5rem auto 0 auto;
+      padding: 0 1.5rem;
+    }
+    .confirmed-order-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 6px 20px rgba(58, 122, 58, 0.1);
+      border: 2px solid #c1f0c1;
+    }
+    .confirmed-order-card h3 {
+      color: #3a7a3a;
+      margin-bottom: 0.8rem;
+      font-size: 1.25rem;
+      border-bottom: 1.5px solid #c1f0c1;
+      padding-bottom: 0.5rem;
+      margin-top: 0;
+    }
+    .reservation-info {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    .review-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    .review-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: #555;
+      border-bottom: 1px dashed #f0f0f0;
+      padding-bottom: 0.4rem;
+    }
+    .review-item-row:last-child {
+      border-bottom: none;
+    }
+    .review-item-name {
+      text-transform: capitalize;
+      font-weight: 500;
+    }
+    .review-total-row, .review-deposit-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      margin-top: 0.4rem;
+    }
+    .review-total-row {
+      font-weight: 600;
+      color: #333;
+      border-top: 1px solid #eee;
+      padding-top: 0.6rem;
+    }
+    .review-deposit-row {
+      font-weight: 700;
+      color: #3a7a3a;
+    }
+
+    header .description {
+      font-size: 0.95rem;
+      max-width: 700px;
+      margin: 0.8rem auto 0 auto;
+      opacity: 0.75;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Global Bites</h1>
+    <h1>Kyden's Kitchen</h1>
     <p>Authentic flavors from around the world</p>
+    <p class="description">
+      Welcome to Kyden's Kitchen, where culinary traditions meet modern taste. We serve a handpicked selection of authentic dishes prepared daily by our master chefs using fresh, high-quality ingredients sourced from their regions of origin. Whether you are craving classic Italian pizza, traditional Japanese ramen, or rich Indian butter chicken, we bring the flavors of the world directly to your table. Join us for an unforgettable dining journey.
+    </p>
   </header>
+
+  <!-- Review Order Section (hidden by default) -->
+  <div class="confirmed-order-container" id="confirmedOrderReview" style="display: none;">
+    <div class="confirmed-order-card">
+      <h3>📋 Your Confirmed Order Review</h3>
+      <p class="reservation-info">Reserved under: <strong id="reviewReserveName"></strong></p>
+      <div class="review-items-list" id="reviewItemsList"></div>
+      <div class="review-total-row">
+        <span>Total Price:</span>
+        <strong id="reviewTotal"></strong>
+      </div>
+      <div class="review-deposit-row">
+        <span>50% Deposit Paid:</span>
+        <strong id="reviewDeposit"></strong>
+      </div>
+    </div>
+  </div>
 
   <div class="container">
     <div class="menu-grid" id="menuGrid"></div>
   </div>
 
   <footer>
-    &copy; 2026 Global Bites Restaurant. Taste the world.
+    &copy; 2026 Kyden's Kitchen. Taste the world.
   </footer>
 
   <div class="q-fab">

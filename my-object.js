@@ -7,6 +7,7 @@ let foodDatabase = [
         vegetarian: false,
         price: 14.99,
         picture: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop",
+        emoji: "🍕",
         ingredients: ["Wheat flour", "Tomato sauce", "Mozzarella cheese", "Fresh basil", "Olive oil"],
         backstory: `Originating in Naples as a simple flatbread for the working class,
 pizza was elevated when tomatoes were introduced from the Americas.
@@ -21,6 +22,7 @@ to honor Queen Margherita of Savoy, mirroring the Italian flag.`
         vegetarian: true,
         price: 18.50,
         picture: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&h=300&fit=crop",
+        emoji: "🍣",
         ingredients: ["Sushi rice", "Nori (seaweed)", "Cucumber", "Avocado", "Rice vinegar"],
         backstory: `Sushi began as a preservation method where fish was fermented in rice.
 Over centuries, the fermentation process was abandoned for fresh fish.
@@ -35,6 +37,7 @@ It quickly evolved from a quick street food snack to a global delicacy.`
         vegetarian: true,
         price: 12.99,
         picture: "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=400&h=300&fit=crop",
+        emoji: "🥢",
         ingredients: ["Rice noodles", "Tofu", "Tamarind paste", "Bean sprouts", "Crushed peanuts"],
         backstory: `Pad Thai was introduced in the 1930s during a nationalistic campaign.
 The government wanted to define a national identity and reduce rice imports.
@@ -49,6 +52,7 @@ Today, it represents the sweet, sour, and savory soul of Thai cuisine.`
         vegetarian: false,
         price: 11.50,
         picture: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&h=300&fit=crop",
+        emoji: "🌮",
         ingredients: ["Corn tortillas", "Grilled beef", "Onions", "Fresh cilantro", "Lime wedges"],
         backstory: `Tacos date back to ancient Mesoamerica, long before Spanish arrival.
 Indigenous people filled corn tortillas with small fish and insects.
@@ -63,6 +67,7 @@ Today, tacos are a vibrant, worldwide symbol of Mexican street food culture.`
         vegetarian: false,
         price: 16.99,
         picture: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&h=300&fit=crop",
+        emoji: "🍛",
         ingredients: ["Chicken", "Butter", "Tomato puree", "Heavy cream", "Garam masala spice blend"],
         backstory: `Butter Chicken was invented by accident in the 1950s in Delhi, India.
 Chefs at Moti Mahal restaurant wanted to save leftover dry tandoori chicken.
@@ -77,6 +82,7 @@ The resulting dish became an instant hit and is now loved worldwide.`
         vegetarian: true,
         price: 10.50,
         picture: "https://plus.unsplash.com/premium_photo-1661743823829-326b78143b30?w=400&h=300&fit=crop",
+        emoji: "🥐",
         ingredients: ["Wheat flour", "Unsalted butter", "Yeast", "Milk", "Sugar"],
         backstory: `The croissant has its ancestry in the Austrian kipferl, dating back to 1683.
 It was brought to France in 1770 when Marie Antoinette married Louis XVI.
@@ -91,6 +97,7 @@ It has since become the flaky, golden cornerstone of French breakfasts.`
         vegetarian: false,
         price: 15.00,
         picture: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop",
+        emoji: "🍜",
         ingredients: ["Wheat noodles", "Pork broth", "Chashu pork slices", "Soft-boiled egg", "Green onions"],
         backstory: `Ramen was originally introduced to Japan by Chinese immigrants in the late 1800s.
 It was cheap, filling, and gained massive popularity among working classes.
@@ -105,6 +112,7 @@ It has evolved into a highly specialized, region-specific culinary art form.`
         vegetarian: false,
         price: 19.99,
         picture: "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=400&h=300&fit=crop",
+        emoji: "🥘",
         ingredients: ["Bomba rice", "Saffron threads", "Chicken", "Rabbit", "Green beans"],
         backstory: `Paella originated in the mid-19th century near Albufera lagoon in Valencia.
 Farmers and laborers cooked rice over an open fire with whatever was available.
@@ -119,6 +127,7 @@ It has become Spain's most iconic dish, representing community and sharing.`
         vegetarian: true,
         price: 10.99,
         picture: "https://plus.unsplash.com/premium_photo-1663853051660-91bd9b822799?w=400&h=300&fit=crop",
+        emoji: "🧆",
         ingredients: ["Ground chickpeas", "Fresh parsley", "Garlic cloves", "Ground cumin", "Coriander"],
         backstory: `The exact origin of falafel is highly debated among historians.
 Some believe it originated in Egypt, made with fava beans instead.
@@ -133,6 +142,7 @@ Today, falafel is a staple Middle Eastern street food enjoyed globally.`
         vegetarian: true,
         price: 12.00,
         picture: "https://images.unsplash.com/photo-1708388064278-707e85eaddc0?w=400&h=300&fit=crop",
+        emoji: "🥬",
         ingredients: ["Napa cabbage", "Korean radish", "Red pepper flakes (Gochugaru)", "Garlic", "Ginger"],
         backstory: `Kimchi originated thousands of years ago as a way to preserve winter vegetables.
 Early versions were simply salted vegetables without any chili peppers.
@@ -147,6 +157,7 @@ It is now South Korea's national dish, eaten with almost every meal.`
         vegetarian: true,
         price: 10.25,
         picture: "https://images.unsplash.com/photo-1567206563064-6f60f40a2b57?w=400&h=300&fit=crop",
+        emoji: "🍨",
         ingredients: ["Whole milk", "Granulated sugar", "Egg yolks", "Heavy cream", "Natural flavoring"],
         backstory: `Gelato traces its roots back to ancient frozen desserts in Sicily and Egypt.
 During the Renaissance, Bernardo Buontalenti created the modern cream gelato.
@@ -161,6 +172,7 @@ This dense texture allows gelato to offer a much richer flavor profile.`
         vegetarian: true,
         price: 13.99,
         picture: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400&h=300&fit=crop",
+        emoji: "🥣",
         ingredients: ["Rice noodles", "Vegetable broth", "Tofu slices", "Star anise", "Cinnamon sticks"],
         backstory: `Pho was born in northern Vietnam in the late 19th or early 20th century.
 Its development was influenced by both Chinese noodles and French beef broth.
@@ -175,6 +187,7 @@ Today, Pho is celebrated globally for its fragrant and healing broth.`
         vegetarian: false,
         price: 14.50,
         picture: "https://images.unsplash.com/photo-1677743537607-f7fc9273ec4d?w=400&h=300&fit=crop",
+        emoji: "🍤",
         ingredients: ["Shrimp", "Mixed vegetables", "Tempura flour", "Ice-cold water", "Frying oil"],
         backstory: `Tempura was introduced to Japan by Portuguese missionaries in the 16th century.
 The name comes from 'tempora,' referring to meat-free fasting periods.
@@ -189,6 +202,7 @@ It evolved into a light, crispy art form that highlights natural flavors.`
         vegetarian: true,
         price: 13.50,
         picture: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=300&fit=crop",
+        emoji: "🍝",
         ingredients: ["Semolina flour", "Eggs", "Water", "Salt", "Olive oil"],
         backstory: `Pasta has ancient origins, with evidence dating back to Etruscan times.
 While legend says Marco Polo brought it from China, it was already present.
@@ -203,6 +217,7 @@ It is now a global staple, served with countless sauces and variations.`
         vegetarian: true,
         price: 11.99,
         picture: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
+        emoji: "🥗",
         ingredients: ["Mixed salad greens", "Cherry tomatoes", "Cucumber", "Olive oil", "Lemon juice"],
         backstory: `Salads were enjoyed by ancient Greeks and Romans with simple dressings.
 The word 'salad' comes from Latin 'sal,' meaning salt, used in dressings.
@@ -226,6 +241,7 @@ function renderMenu(containerId) {
                 <div class="meta">
                     <span>${item.cusine} · ${item.origin}</span>
                     <div class="right-meta">
+                        <button class="order-btn-circle" data-id="${item.id}" aria-label="Add to Order">${item.emoji || '🍽️'}</button>
                         <span class="price">$${item.price.toFixed(2)}</span>
                         <span class="badge ${vegStatus}">${vegLabel}</span>
                     </div>
@@ -377,6 +393,35 @@ function setupOrderSystem() {
         }
     });
 
+    // Listen for yellow order button clicks from menu cards
+    const menuGrid = document.getElementById('menuGrid');
+    if (menuGrid) {
+        menuGrid.addEventListener('click', (e) => {
+            const btn = e.target.closest('.order-btn-circle');
+            if (btn) {
+                const id = btn.getAttribute('data-id');
+                orderQuantities[id] = (orderQuantities[id] || 0) + 1;
+                
+                // Update quantity visual element in cart
+                const qtyValElement = document.getElementById(`qty-${id}`);
+                if (qtyValElement) {
+                    qtyValElement.textContent = orderQuantities[id];
+                }
+                
+                updateOrderSummary();
+                
+                // Animate the cart button briefly to show item was added
+                const orderToggle = document.getElementById('orderToggle');
+                if (orderToggle) {
+                    orderToggle.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        orderToggle.style.transform = '';
+                    }, 200);
+                }
+            }
+        });
+    }
+
     // Toggle Modal
     orderToggle.addEventListener('click', () => {
         orderModal.classList.add('open');
@@ -407,6 +452,24 @@ function setupOrderSystem() {
         // Show deposit total
         depositTotal.textContent = `$${currentTotal.toFixed(2)}`;
         depositAmount.textContent = `$${(currentTotal * 0.5).toFixed(2)}`;
+
+        // Populate order review list inside the payment modal
+        const paymentReviewItemsList = document.getElementById('paymentReviewItemsList');
+        if (paymentReviewItemsList) {
+            paymentReviewItemsList.innerHTML = '';
+            foodDatabase.forEach(item => {
+                const qty = orderQuantities[item.id] || 0;
+                if (qty > 0) {
+                    const row = document.createElement('div');
+                    row.className = 'review-item-row';
+                    row.innerHTML = `
+                        <span class="review-item-name">${item.emoji || '🍽️'} ${item.name} <span style="color: #888;">x${qty}</span></span>
+                        <span>$${(item.price * qty).toFixed(2)}</span>
+                    `;
+                    paymentReviewItemsList.appendChild(row);
+                }
+            });
+        }
 
         // Clear previous input
         reserveName.value = '';
