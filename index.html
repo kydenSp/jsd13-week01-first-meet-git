@@ -29,9 +29,11 @@
     }
     header h1 {
       font-family: 'Berkshire Swash', serif;
-      font-size: 2.8rem;
+      font-size: 3.6rem;
       margin-bottom: 0.3rem;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      color: #6B2D5B;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
     }
     header p {
       font-size: 1.1rem;
@@ -565,19 +567,27 @@
     </p>
   </header>
 
-  <!-- Review Order Section (hidden by default) -->
-  <div class="confirmed-order-container" id="confirmedOrderReview" style="display: none;">
-    <div class="confirmed-order-card">
-      <h3>📋 Your Confirmed Order Review</h3>
-      <p class="reservation-info">Reserved under: <strong id="reviewReserveName"></strong></p>
-      <div class="review-items-list" id="reviewItemsList"></div>
-      <div class="review-total-row">
-        <span>Total Price:</span>
-        <strong id="reviewTotal"></strong>
+  <!-- Summary Review Popup Modal Window -->
+  <div class="order-modal" id="summaryModal">
+    <div class="order-modal-content" style="max-height: 520px;">
+      <div class="order-modal-header" style="background: linear-gradient(135deg, #c1f0c1, #a8e6a8);">
+        <h2>📋 Your Confirmed Order Review</h2>
+        <button class="close-btn" id="closeSummaryModal">&times;</button>
       </div>
-      <div class="review-deposit-row">
-        <span>50% Deposit Paid:</span>
-        <strong id="reviewDeposit"></strong>
+      <div class="order-modal-body">
+        <p class="reservation-info">Reserved under: <strong id="reviewReserveName"></strong></p>
+        <div class="review-items-list" id="reviewItemsList"></div>
+        <div class="review-total-row">
+          <span>Total Price:</span>
+          <strong id="reviewTotal"></strong>
+        </div>
+        <div class="review-deposit-row">
+          <span>50% Deposit Due:</span>
+          <strong id="reviewDeposit"></strong>
+        </div>
+      </div>
+      <div class="order-modal-footer">
+        <button class="confirm-order-btn" id="proceedToPaymentBtn" style="width: 100%; background: #3a7a3a;">Proceed to Payment</button>
       </div>
     </div>
   </div>
@@ -650,9 +660,9 @@
           </div>
         </div>
         <div class="fake-bank-details" style="border: 1px dashed #c1f0c1; background: #fcfbfd; padding: 1rem; border-radius: 12px; font-size: 0.85rem; text-align: center; color: #666;">
-          <p style="font-weight: 600; color: #3a7a3a; margin-bottom: 0.5rem;">💸 Fake Payment Deposit 💸</p>
-          <p>Bank: <strong>Antigravity Bank</strong></p>
-          <p>Account Number: <strong>777-999-555-001</strong></p>
+          <p style="font-weight: 600; color: #3a7a3a; margin-bottom: 0.5rem;">💸 Payment Deposit 💸</p>
+          <p>Bank: <strong>Kydeniel restulre</strong></p>
+          <p>Account Number: <strong>000-000-000-000</strong></p>
           <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #999;">Scan or transfer exactly 50% to reserve your dishes!</p>
         </div>
       </div>
@@ -671,7 +681,7 @@
       </div>
       <div class="order-modal-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem;">
         <h3 style="color: #3a7a3a; margin-bottom: 1rem; font-size: 1.3rem;">Thank you for paying for me ka eiei 😘</h3>
-        <img src="thank_you_meme.jpg" alt="Thank You Meme" style="max-width: 100%; max-height: 250px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); object-fit: contain;">
+        <div id="thankYouImages" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 100%;"></div>
       </div>
       <div class="order-modal-footer" style="justify-content: center;">
         <button class="confirm-order-btn" id="finishThankYouBtn" style="background: #3a7a3a; padding: 10px 40px;">Close</button>

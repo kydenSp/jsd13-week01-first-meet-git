@@ -437,7 +437,7 @@ function setupOrderSystem() {
         }
     });
 
-    // Confirm Order (Goes to Deposit Modal)
+    // Confirm Order (Goes to Reservation Summary)
     confirmOrderBtn.addEventListener('click', () => {
         let totalQty = 0;
         foodDatabase.forEach(item => {
@@ -449,14 +449,14 @@ function setupOrderSystem() {
             return;
         }
 
-        // Show deposit total
-        depositTotal.textContent = `$${currentTotal.toFixed(2)}`;
-        depositAmount.textContent = `$${(currentTotal * 0.5).toFixed(2)}`;
+        // Populate reservation summary section
+        const reviewItemsList = document.getElementById('reviewItemsList');
+        const reviewTotal = document.getElementById('reviewTotal');
+        const reviewDeposit = document.getElementById('reviewDeposit');
+        const reviewReserveName = document.getElementById('reviewReserveName');
 
-        // Populate order review list inside the payment modal
-        const paymentReviewItemsList = document.getElementById('paymentReviewItemsList');
-        if (paymentReviewItemsList) {
-            paymentReviewItemsList.innerHTML = '';
+        if (reviewItemsList) {
+            reviewItemsList.innerHTML = '';
             foodDatabase.forEach(item => {
                 const qty = orderQuantities[item.id] || 0;
                 if (qty > 0) {
@@ -466,18 +466,52 @@ function setupOrderSystem() {
                         <span class="review-item-name">${item.emoji || '🍽️'} ${item.name} <span style="color: #888;">x${qty}</span></span>
                         <span>$${(item.price * qty).toFixed(2)}</span>
                     `;
-                    paymentReviewItemsList.appendChild(row);
+                    reviewItemsList.appendChild(row);
                 }
             });
         }
 
-        // Clear previous input
-        reserveName.value = '';
+        if (reviewTotal) reviewTotal.textContent = `$${currentTotal.toFixed(2)}`;
+        if (reviewDeposit) reviewDeposit.textContent = `$${(currentTotal * 0.5).toFixed(2)}`;
+        if (reviewReserveName) reviewReserveName.textContent = '-';
 
-        // Switch Modals
+        // Close order modal and show summary modal
         orderModal.classList.remove('open');
-        paymentModal.classList.add('open');
+        summaryModal.classList.add('open');
     });
+
+    // Close Summary Modal
+    const summaryModal = document.getElementById('summaryModal');
+    const closeSummaryModal = document.getElementById('closeSummaryModal');
+    if (closeSummaryModal) {
+        closeSummaryModal.addEventListener('click', () => {
+            summaryModal.classList.remove('open');
+        });
+    }
+    if (summaryModal) {
+        summaryModal.addEventListener('click', (e) => {
+            if (e.target === summaryModal) {
+                summaryModal.classList.remove('open');
+            }
+        });
+    }
+
+    // Proceed to Payment (from Reservation Summary)
+    const proceedToPaymentBtn = document.getElementById('proceedToPaymentBtn');
+    if (proceedToPaymentBtn) {
+        proceedToPaymentBtn.addEventListener('click', () => {
+            // Set deposit amounts in payment modal
+            depositTotal.textContent = `$${currentTotal.toFixed(2)}`;
+            depositAmount.textContent = `$${(currentTotal * 0.5).toFixed(2)}`;
+
+            // Clear previous input
+            reserveName.value = '';
+
+            // Close summary modal and open payment modal
+            summaryModal.classList.remove('open');
+            paymentModal.classList.add('open');
+        });
+    }
 
     // Close Payment Modal
     closePaymentModal.addEventListener('click', () => {
@@ -497,6 +531,29 @@ function setupOrderSystem() {
             return;
         }
 
+        // Update reservation name in summary
+        const reviewReserveName = document.getElementById('reviewReserveName');
+        if (reviewReserveName) reviewReserveName.textContent = reserveName.value.trim();
+
+        // Random 5 pics for thank you page
+        const picUrls = [
+            'thank_you_meme.jpg',
+            'https://scontent.fbkk29-2.fna.fbcdn.net/v/t39.30808-6/710613597_1472662064600914_7560306286395228899_n.jpg?stp=dst-jpg_tt6&cstp=mx720x720&ctp=s720x720&_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=Aa_0htwpdVcQ7kNvwHP_Ddf&_nc_oc=AdrjLZV-19SXHclYSeNHv4X84Je63xNyELZIz6iaQZ37e1lT5GAR_LNkP05i02aSUmI&_nc_zt=23&_nc_ht=scontent.fbkk29-2.fna&_nc_gid=TlavjR8ivtCbl4SY0s2KKQ&_nc_ss=7b289&oh=00_AQAP6A36NxeQ2v8sM7YbBtufV6E3wbw_UUFRu4D7_0E1Zw&oe=6A4D6842',
+            'https://pbs.twimg.com/media/HLS5MyzWsAAD5a0?format=jpg&name=900x900',
+            'https://instagram.fbkk29-6.fna.fbcdn.net/v/t51.82787-15/711965744_18042462017595253_9198837664940339946_n.jpg?stp=cp6_dst-jpg_e35_tt6&_nc_cat=101&_nc_map=urlgen_bucketless&ig_cache_key=MzkwNDg2NDMzMzI5MTQ4MDA5OQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuODc4LnNkci5yZWd1bGFyX3Bob3RvLkMzIn0%3D&_nc_ohc=bXYdlAjE1m0Q7kNvwH_MZYb&_nc_oc=AdpFfdyksbwIQw8LCYkahHGfg--oMmtoNKxs8wCLdMjhTRKZViYrc940WAS57DuV4bQ&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fbkk29-6.fna&_nc_gid=azlUOYG7M7fJ0w3cdeARoA&_nc_ss=7a22e&oh=00_AQAk-p2TduEp5_3W7T6_yd9-imkbp_EbIWIADcw7MdRHPw&oe=6A4D69BD',
+            'https://scontent.fbkk29-4.fna.fbcdn.net/v/t39.30808-6/730487506_820471187669936_292541833177796004_n.jpg?stp=dst-jpg_tt6&cstp=mx736x762&ctp=s736x762&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=EJ0LI904eEgQ7kNvwEETf_B&_nc_oc=AdqfSuFs05HQAjeFYmIi985uGxfq5qU-w6-L9QK2b6kp47DD-FqiDxc0Ycf89CXNqXw&_nc_zt=23&_nc_ht=scontent.fbkk29-4.fna&_nc_gid=DiR-IxJDSTRiumfr0hFzrA&_nc_ss=7b289&oh=00_AQDZByPj-GvzCggWS8ZvkvniUi9qm5lFSVk86b5CcfFJGA&oe=6A4D507C'
+        ];
+        const randomUrl = picUrls[Math.floor(Math.random() * picUrls.length)];
+        const container = document.getElementById('thankYouImages');
+        if (container) {
+            container.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = randomUrl;
+            img.alt = 'Thank You';
+            img.style.cssText = 'max-width: 100%; max-height: 250px; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+            container.appendChild(img);
+        }
+
         // Close Payment Modal and Open Thank You Modal
         paymentModal.classList.remove('open');
         thankYouModal.classList.add('open');
@@ -511,6 +568,10 @@ function setupOrderSystem() {
     function finishOrder() {
         thankYouModal.classList.remove('open');
         
+        // Close summary modal
+        const summaryModal = document.getElementById('summaryModal');
+        if (summaryModal) summaryModal.classList.remove('open');
+
         // Reset quantities
         foodDatabase.forEach(item => {
             orderQuantities[item.id] = 0;
