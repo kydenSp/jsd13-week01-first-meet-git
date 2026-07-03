@@ -234,16 +234,19 @@ function renderMenu(containerId) {
         const vegLabel = item.vegetarian ? 'Vegetarian' : 'Non-Veg';
         const card = document.createElement('div');
         card.className = 'menu-card';
+        card.dataset.id = item.id;
         card.innerHTML = `
             <img src="${item.picture}" alt="${item.name}" loading="lazy">
             <div class="info">
-                <h3>${item.name}</h3>
+                <h3>${item.name} ${item.emoji || ''}</h3>
                 <div class="meta">
-                    <span>${item.cusine} · ${item.origin}</span>
+                    <div class="left-meta">
+                        <span>${item.cusine} · ${item.origin}</span>
+                        <span class="badge ${vegStatus}">${vegLabel}</span>
+                    </div>
                     <div class="right-meta">
                         <button class="order-btn-circle" data-id="${item.id}" aria-label="Add to Order">${item.emoji || '🍽️'}</button>
                         <span class="price">$${item.price.toFixed(2)}</span>
-                        <span class="badge ${vegStatus}">${vegLabel}</span>
                     </div>
                 </div>
                 <div class="details">
@@ -299,7 +302,6 @@ function renderMenu(containerId) {
             const originalText = textSpan.textContent;
             textSpan.textContent = 'Copied!';
             
-            // Generate simple hash URL for sharing
             const shareUrl = `${window.location.origin}${window.location.pathname}#${item.name.replace(/\s+/g, '-')}`;
             navigator.clipboard.writeText(shareUrl).catch(() => {});
             
@@ -309,19 +311,24 @@ function renderMenu(containerId) {
             }, 1500);
         });
 
+        // Click card to show detail
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            showDetail(item);
+        });
+
         grid.appendChild(card);
     });
 }
 
 function setupOrderSystem() {
     const orderToggle = document.getElementById('orderToggle');
-    const orderModal = document.getElementById('orderModal');
-    const closeOrderModal = document.getElementById('closeOrderModal');
-    const orderItemsList = document.getElementById('orderItemsList');
-    const orderTotalPrice = document.getElementById('orderTotalPrice');
-    const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+    const cartBadge = document.getElementById('cartBadge');
+    const summaryModal = document.getElementById('summaryModal');
+    const closeSummaryModal = document.getElementById('closeSummaryModal');
+    const proceedToPaymentBtn = document.getElementById('proceedToPaymentBtn');
 
-    // New Modal Elements
+    // Payment Modal Elements
     const paymentModal = document.getElementById('paymentModal');
     const closePaymentModal = document.getElementById('closePaymentModal');
     const reserveName = document.getElementById('reserveName');
@@ -333,67 +340,45 @@ function setupOrderSystem() {
     const closeThankYouModal = document.getElementById('closeThankYouModal');
     const finishThankYouBtn = document.getElementById('finishThankYouBtn');
 
-    if (!orderToggle || !orderModal || !closeOrderModal || !orderItemsList || !orderTotalPrice || !confirmOrderBtn ||
-        !paymentModal || !closePaymentModal || !reserveName || !depositTotal || !depositAmount || !completePaymentBtn ||
-        !thankYouModal || !closeThankYouModal || !finishThankYouBtn) return;
+    if (!orderToggle || !summaryModal || !paymentModal || !thankYouModal) return;
 
-    // Track quantities: id -> quantity
+    // Track quantities per item
     const orderQuantities = {};
-    foodDatabase.forEach(item => {
-        orderQuantities[item.id] = 0;
-    });
+    foodDatabase.forEach(item => { orderQuantities[item.id] = 0; });
 
-    // Populate order item list
-    orderItemsList.innerHTML = '';
-    foodDatabase.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'order-item-row';
-        row.innerHTML = `
-            <div class="order-item-left">
-                <img src="${item.picture}" alt="${item.name}" loading="lazy">
-                <div class="item-name-price">
-                    <span class="item-name">${item.name}</span>
-                    <span class="item-price">$${item.price.toFixed(2)}</span>
-                </div>
-            </div>
-            <div class="order-item-right">
-                <button class="qty-btn dec-btn" data-id="${item.id}">-</button>
-                <span class="qty-val" id="qty-${item.id}">0</span>
-                <button class="qty-btn inc-btn" data-id="${item.id}">+</button>
-            </div>
-        `;
-        orderItemsList.appendChild(row);
-    });
-
-    // Update summary function
-    let currentTotal = 0;
-    function updateOrderSummary() {
-        currentTotal = 0;
-        foodDatabase.forEach(item => {
-            const qty = orderQuantities[item.id] || 0;
-            currentTotal += qty * item.price;
-        });
-        orderTotalPrice.textContent = `$${currentTotal.toFixed(2)}`;
+    function updateBadge() {
+        const total = Object.values(orderQuantities).reduce((s, v) => s + v, 0);
+        cartBadge.textContent = total;
+        cartBadge.style.display = total > 0 ? 'flex' : 'none';
     }
 
-    // Event delegation for quantity buttons
-    orderItemsList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('qty-btn')) {
-            const id = e.target.getAttribute('data-id');
-            const qtyValElement = document.getElementById(`qty-${id}`);
-            
-            if (e.target.classList.contains('inc-btn')) {
-                orderQuantities[id] = (orderQuantities[id] || 0) + 1;
-            } else if (e.target.classList.contains('dec-btn')) {
-                orderQuantities[id] = Math.max(0, (orderQuantities[id] || 0) - 1);
-            }
-            
-            qtyValElement.textContent = orderQuantities[id];
-            updateOrderSummary();
-        }
-    });
+    function updateSummaryModal() {
+        let currentTotal = 0;
+        const reviewItemsList = document.getElementById('reviewItemsList');
+        const reviewTotal = document.getElementById('reviewTotal');
+        const reviewDeposit = document.getElementById('reviewDeposit');
 
-    // Listen for yellow order button clicks from menu cards
+        if (reviewItemsList) {
+            reviewItemsList.innerHTML = '';
+            foodDatabase.forEach(item => {
+                const qty = orderQuantities[item.id] || 0;
+                if (qty > 0) {
+                    currentTotal += qty * item.price;
+                    const row = document.createElement('div');
+                    row.className = 'review-item-row';
+                    row.innerHTML = `
+                        <span class="review-item-name">${item.emoji || '🍽️'} ${item.name} <span style="color:#888;">x${qty}</span></span>
+                        <span>$${(item.price * qty).toFixed(2)}</span>
+                    `;
+                    reviewItemsList.appendChild(row);
+                }
+            });
+        }
+        if (reviewTotal) reviewTotal.textContent = `$${currentTotal.toFixed(2)}`;
+        if (reviewDeposit) reviewDeposit.textContent = `$${(currentTotal * 0.5).toFixed(2)}`;
+    }
+
+    // Listen for yellow order button clicks on menu cards
     const menuGrid = document.getElementById('menuGrid');
     if (menuGrid) {
         menuGrid.addEventListener('click', (e) => {
@@ -401,195 +386,226 @@ function setupOrderSystem() {
             if (btn) {
                 const id = btn.getAttribute('data-id');
                 orderQuantities[id] = (orderQuantities[id] || 0) + 1;
-                
-                // Update quantity visual element in cart
-                const qtyValElement = document.getElementById(`qty-${id}`);
-                if (qtyValElement) {
-                    qtyValElement.textContent = orderQuantities[id];
-                }
-                
-                updateOrderSummary();
-                
-                // Animate the cart button briefly to show item was added
+                updateBadge();
+
                 const orderToggle = document.getElementById('orderToggle');
                 if (orderToggle) {
                     orderToggle.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        orderToggle.style.transform = '';
-                    }, 200);
+                    setTimeout(() => { orderToggle.style.transform = ''; }, 200);
                 }
             }
         });
     }
 
-    // Toggle Modal
+    // Cart FAB → Summary Modal
     orderToggle.addEventListener('click', () => {
-        orderModal.classList.add('open');
-    });
-
-    closeOrderModal.addEventListener('click', () => {
-        orderModal.classList.remove('open');
-    });
-
-    orderModal.addEventListener('click', (e) => {
-        if (e.target === orderModal) {
-            orderModal.classList.remove('open');
-        }
-    });
-
-    // Confirm Order (Goes to Reservation Summary)
-    confirmOrderBtn.addEventListener('click', () => {
-        let totalQty = 0;
-        foodDatabase.forEach(item => {
-            totalQty += orderQuantities[item.id] || 0;
-        });
-
-        if (totalQty === 0) {
-            alert('Please select at least one item to order in advance!');
+        const total = Object.values(orderQuantities).reduce((s, v) => s + v, 0);
+        if (total === 0) {
+            alert('Please select at least one item first!');
             return;
         }
-
-        // Populate reservation summary section
-        const reviewItemsList = document.getElementById('reviewItemsList');
-        const reviewTotal = document.getElementById('reviewTotal');
-        const reviewDeposit = document.getElementById('reviewDeposit');
-        const reviewReserveName = document.getElementById('reviewReserveName');
-
-        if (reviewItemsList) {
-            reviewItemsList.innerHTML = '';
-            foodDatabase.forEach(item => {
-                const qty = orderQuantities[item.id] || 0;
-                if (qty > 0) {
-                    const row = document.createElement('div');
-                    row.className = 'review-item-row';
-                    row.innerHTML = `
-                        <span class="review-item-name">${item.emoji || '🍽️'} ${item.name} <span style="color: #888;">x${qty}</span></span>
-                        <span>$${(item.price * qty).toFixed(2)}</span>
-                    `;
-                    reviewItemsList.appendChild(row);
-                }
-            });
-        }
-
-        if (reviewTotal) reviewTotal.textContent = `$${currentTotal.toFixed(2)}`;
-        if (reviewDeposit) reviewDeposit.textContent = `$${(currentTotal * 0.5).toFixed(2)}`;
-        if (reviewReserveName) reviewReserveName.textContent = '-';
-
-        // Close order modal and show summary modal
-        orderModal.classList.remove('open');
+        updateSummaryModal();
         summaryModal.classList.add('open');
     });
 
-    // Close Summary Modal
-    const summaryModal = document.getElementById('summaryModal');
-    const closeSummaryModal = document.getElementById('closeSummaryModal');
     if (closeSummaryModal) {
-        closeSummaryModal.addEventListener('click', () => {
-            summaryModal.classList.remove('open');
-        });
+        closeSummaryModal.addEventListener('click', () => summaryModal.classList.remove('open'));
     }
-    if (summaryModal) {
-        summaryModal.addEventListener('click', (e) => {
-            if (e.target === summaryModal) {
-                summaryModal.classList.remove('open');
-            }
-        });
-    }
+    summaryModal.addEventListener('click', (e) => {
+        if (e.target === summaryModal) summaryModal.classList.remove('open');
+    });
 
-    // Proceed to Payment (from Reservation Summary)
-    const proceedToPaymentBtn = document.getElementById('proceedToPaymentBtn');
+    // Proceed to Payment
     if (proceedToPaymentBtn) {
         proceedToPaymentBtn.addEventListener('click', () => {
-            // Set deposit amounts in payment modal
+            let currentTotal = 0;
+            foodDatabase.forEach(item => {
+                currentTotal += (orderQuantities[item.id] || 0) * item.price;
+            });
             depositTotal.textContent = `$${currentTotal.toFixed(2)}`;
             depositAmount.textContent = `$${(currentTotal * 0.5).toFixed(2)}`;
-
-            // Clear previous input
             reserveName.value = '';
-
-            // Close summary modal and open payment modal
             summaryModal.classList.remove('open');
             paymentModal.classList.add('open');
         });
     }
 
-    // Close Payment Modal
-    closePaymentModal.addEventListener('click', () => {
-        paymentModal.classList.remove('open');
-    });
-
+    if (closePaymentModal) {
+        closePaymentModal.addEventListener('click', () => paymentModal.classList.remove('open'));
+    }
     paymentModal.addEventListener('click', (e) => {
-        if (e.target === paymentModal) {
+        if (e.target === paymentModal) paymentModal.classList.remove('open');
+    });
+
+    // Seat counter (1-20)
+    let seatCount = 1;
+    const seatNum = document.getElementById('seatNum');
+    const seatDec = document.getElementById('seatDec');
+    const seatInc = document.getElementById('seatInc');
+    if (seatDec && seatInc && seatNum) {
+        function updateSeat() {
+            seatNum.textContent = seatCount;
+        }
+        seatDec.addEventListener('click', () => {
+            if (seatCount > 1) { seatCount--; updateSeat(); }
+        });
+        seatInc.addEventListener('click', () => {
+            if (seatCount < 20) { seatCount++; updateSeat(); }
+        });
+    }
+
+    // Complete Payment
+    if (completePaymentBtn) {
+        completePaymentBtn.addEventListener('click', () => {
+            if (!reserveName.value.trim()) {
+                alert('Please enter a reservation name!');
+                return;
+            }
+            const reviewReserveName = document.getElementById('reviewReserveName');
+            if (reviewReserveName) reviewReserveName.textContent = reserveName.value.trim();
+            const reviewSeats = document.getElementById('reviewSeats');
+            if (reviewSeats) reviewSeats.textContent = seatCount;
+
+            const picUrls = [
+                'thank_you_meme.jpg',
+                'https://scontent.fbkk29-2.fna.fbcdn.net/v/t39.30808-6/710613597_1472662064600914_7560306286395228899_n.jpg?stp=dst-jpg_tt6&cstp=mx720x720&ctp=s720x720&_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=Aa_0htwpdVcQ7kNvwHP_Ddf&_nc_oc=AdrjLZV-19SXHclYSeNHv4X84Je63xNyELZIz6iaQZ37e1lT5GAR_LNkP05i02aSUmI&_nc_zt=23&_nc_ht=scontent.fbkk29-2.fna&_nc_gid=TlavjR8ivtCbl4SY0s2KKQ&_nc_ss=7b289&oh=00_AQAP6A36NxeQ2v8sM7YbBtufV6E3wbw_UUFRu4D7_0E1Zw&oe=6A4D6842',
+                'https://pbs.twimg.com/media/HLS5MyzWsAAD5a0?format=jpg&name=900x900',
+                'https://instagram.fbkk29-6.fna.fbcdn.net/v/t51.82787-15/711965744_18042462017595253_9198837664940339946_n.jpg?stp=cp6_dst-jpg_e35_tt6&_nc_cat=101&_nc_map=urlgen_bucketless&ig_cache_key=MzkwNDg2NDMzMzI5MTQ4MDA5OQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuODc4LnNkci5yZWd1bGFyX3Bob3RvLkMzIn0%3D&_nc_ohc=bXYdlAjE1m0Q7kNvwH_MZYb&_nc_oc=AdpFfdyksbwIQw8LCYkahHGfg--oMmtoNKxs8wCLdMjhTRKZViYrc940WAS57DuV4bQ&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fbkk29-6.fna&_nc_gid=azlUOYG7M7fJ0w3cdeARoA&_nc_ss=7a22e&oh=00_AQAk-p2TduEp5_3W7T6_yd9-imkbp_EbIWIADcw7MdRHPw&oe=6A4D69BD',
+                'https://scontent.fbkk29-4.fna.fbcdn.net/v/t39.30808-6/730487506_820471187669936_292541833177796004_n.jpg?stp=dst-jpg_tt6&cstp=mx736x762&ctp=s736x762&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=EJ0LI904eEgQ7kNvwEETf_B&_nc_oc=AdqfSuFs05HQAjeFYmIi985uGxfq5qU-w6-L9QK2b6kp47DD-FqiDxc0Ycf89CXNqXw&_nc_zt=23&_nc_ht=scontent.fbkk29-4.fna&_nc_gid=DiR-IxJDSTRiumfr0hFzrA&_nc_ss=7b289&oh=00_AQDZByPj-GvzCggWS8ZvkvniUi9qm5lFSVk86b5CcfFJGA&oe=6A4D507C'
+            ];
+            const randomUrl = picUrls[Math.floor(Math.random() * picUrls.length)];
+            const container = document.getElementById('thankYouImages');
+            if (container) {
+                container.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = randomUrl;
+                img.alt = 'Thank You';
+                img.style.cssText = 'max-width:100%;max-height:250px;border-radius:12px;object-fit:contain;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+                container.appendChild(img);
+            }
+
             paymentModal.classList.remove('open');
-        }
-    });
+            thankYouModal.classList.add('open');
+            orderToggle.innerHTML = '<span style="font-size:26px;line-height:1;display:inline-block;">🙏</span>';
+            orderToggle.style.background = '#c1f0c1';
+            orderToggle.style.boxShadow = '0 4px 12px rgba(193,240,193,0.4)';
+        });
+    }
 
-    // Complete Deposit & Order (Goes to Thank You Modal)
-    completePaymentBtn.addEventListener('click', () => {
-        if (!reserveName.value.trim()) {
-            alert('Please enter a reservation name!');
-            return;
-        }
-
-        // Update reservation name in summary
-        const reviewReserveName = document.getElementById('reviewReserveName');
-        if (reviewReserveName) reviewReserveName.textContent = reserveName.value.trim();
-
-        // Random 5 pics for thank you page
-        const picUrls = [
-            'thank_you_meme.jpg',
-            'https://scontent.fbkk29-2.fna.fbcdn.net/v/t39.30808-6/710613597_1472662064600914_7560306286395228899_n.jpg?stp=dst-jpg_tt6&cstp=mx720x720&ctp=s720x720&_nc_cat=110&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=Aa_0htwpdVcQ7kNvwHP_Ddf&_nc_oc=AdrjLZV-19SXHclYSeNHv4X84Je63xNyELZIz6iaQZ37e1lT5GAR_LNkP05i02aSUmI&_nc_zt=23&_nc_ht=scontent.fbkk29-2.fna&_nc_gid=TlavjR8ivtCbl4SY0s2KKQ&_nc_ss=7b289&oh=00_AQAP6A36NxeQ2v8sM7YbBtufV6E3wbw_UUFRu4D7_0E1Zw&oe=6A4D6842',
-            'https://pbs.twimg.com/media/HLS5MyzWsAAD5a0?format=jpg&name=900x900',
-            'https://instagram.fbkk29-6.fna.fbcdn.net/v/t51.82787-15/711965744_18042462017595253_9198837664940339946_n.jpg?stp=cp6_dst-jpg_e35_tt6&_nc_cat=101&_nc_map=urlgen_bucketless&ig_cache_key=MzkwNDg2NDMzMzI5MTQ4MDA5OQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuODc4LnNkci5yZWd1bGFyX3Bob3RvLkMzIn0%3D&_nc_ohc=bXYdlAjE1m0Q7kNvwH_MZYb&_nc_oc=AdpFfdyksbwIQw8LCYkahHGfg--oMmtoNKxs8wCLdMjhTRKZViYrc940WAS57DuV4bQ&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fbkk29-6.fna&_nc_gid=azlUOYG7M7fJ0w3cdeARoA&_nc_ss=7a22e&oh=00_AQAk-p2TduEp5_3W7T6_yd9-imkbp_EbIWIADcw7MdRHPw&oe=6A4D69BD',
-            'https://scontent.fbkk29-4.fna.fbcdn.net/v/t39.30808-6/730487506_820471187669936_292541833177796004_n.jpg?stp=dst-jpg_tt6&cstp=mx736x762&ctp=s736x762&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=aa7b47&_nc_ohc=EJ0LI904eEgQ7kNvwEETf_B&_nc_oc=AdqfSuFs05HQAjeFYmIi985uGxfq5qU-w6-L9QK2b6kp47DD-FqiDxc0Ycf89CXNqXw&_nc_zt=23&_nc_ht=scontent.fbkk29-4.fna&_nc_gid=DiR-IxJDSTRiumfr0hFzrA&_nc_ss=7b289&oh=00_AQDZByPj-GvzCggWS8ZvkvniUi9qm5lFSVk86b5CcfFJGA&oe=6A4D507C'
-        ];
-        const randomUrl = picUrls[Math.floor(Math.random() * picUrls.length)];
-        const container = document.getElementById('thankYouImages');
-        if (container) {
-            container.innerHTML = '';
-            const img = document.createElement('img');
-            img.src = randomUrl;
-            img.alt = 'Thank You';
-            img.style.cssText = 'max-width: 100%; max-height: 250px; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
-            container.appendChild(img);
-        }
-
-        // Close Payment Modal and Open Thank You Modal
-        paymentModal.classList.remove('open');
-        thankYouModal.classList.add('open');
-
-        // Change Cart Icon in Order Toggle Button to Praying Icon (🙏)
-        orderToggle.innerHTML = '<span style="font-size: 26px; line-height: 1; display: inline-block;">🙏</span>';
-        orderToggle.style.background = '#c1f0c1';
-        orderToggle.style.boxShadow = '0 4px 12px rgba(193, 240, 193, 0.4)';
-    });
-
-    // Close Thank You Modal & Reset Order
     function finishOrder() {
         thankYouModal.classList.remove('open');
-        
-        // Close summary modal
         const summaryModal = document.getElementById('summaryModal');
         if (summaryModal) summaryModal.classList.remove('open');
 
-        // Reset quantities
         foodDatabase.forEach(item => {
             orderQuantities[item.id] = 0;
-            const qtyValElement = document.getElementById(`qty-${item.id}`);
-            if (qtyValElement) qtyValElement.textContent = 0;
         });
-        updateOrderSummary();
+        updateBadge();
+        const sn = document.getElementById('seatNum');
+        if (sn) sn.textContent = '1';
+
+        orderToggle.innerHTML = `<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+        orderToggle.style.background = '';
+        orderToggle.style.boxShadow = '';
     }
 
-    closeThankYouModal.addEventListener('click', finishOrder);
-    finishThankYouBtn.addEventListener('click', finishOrder);
-
+    if (closeThankYouModal) closeThankYouModal.addEventListener('click', finishOrder);
+    if (finishThankYouBtn) finishThankYouBtn.addEventListener('click', finishOrder);
     thankYouModal.addEventListener('click', (e) => {
-        if (e.target === thankYouModal) {
-            finishOrder();
-        }
+        if (e.target === thankYouModal) finishOrder();
+    });
+
+    updateBadge();
+}
+
+function showDetail(item) {
+    const modal = document.getElementById('detailModal');
+    const content = document.getElementById('detailContent');
+    if (!modal || !content) return;
+
+    const vegStatus = item.vegetarian ? 'veg' : 'nonveg';
+    const vegLabel = item.vegetarian ? 'Vegetarian' : 'Non-Veg';
+
+    content.innerHTML = `
+        <img src="${item.picture}" alt="${item.name}">
+        <div class="detail-body">
+            <h2>${item.name} ${item.emoji || ''}</h2>
+            <div class="detail-cuisine">${item.cusine} · ${item.origin} · <span class="badge ${vegStatus}" style="font-size:0.7rem;">${vegLabel}</span></div>
+            <div class="detail-price">$${item.price.toFixed(2)}</div>
+            <div class="detail-section">
+                <strong>Ingredients</strong>
+                <p>${item.ingredients.join(', ')}</p>
+            </div>
+            <div class="detail-section">
+                <strong>Backstory</strong>
+                <p>${item.backstory.replace(/\n/g, '<br>')}</p>
+            </div>
+        </div>
+        <button class="detail-close">Close</button>
+    `;
+
+    modal.classList.add('open');
+
+    content.querySelector('.detail-close').addEventListener('click', () => {
+        modal.classList.remove('open');
+    });
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('open');
     });
 }
 
-console.log(foodDatabase[0]);
-setupOrderSystem();
+function setupSurprise() {
+    const modal = document.getElementById('surpriseModal');
+    const stage = document.getElementById('surpriseStage');
+    if (!modal || !stage) return;
+
+    function showStage(html) {
+        stage.innerHTML = html;
+    }
+
+    function openModal() {
+        showStage(`
+            <h2>MEMBERSHIP</h2>
+            <p>Are you a member?</p>
+            <div class="surprise-btn-group">
+                <button class="surprise-btn" id="sYeah">yeaaa</button>
+                <button class="surprise-btn" id="sNah">narrr</button>
+            </div>
+        `);
+        modal.classList.add('open');
+
+        document.getElementById('sYeah').addEventListener('click', () => {
+            showStage(`
+                <h2>I DONT BELIEVE U &#128545;</h2>
+                <img class="surprise-img" src="https://pbs.twimg.com/profile_images/1939971089599176704/ERGX8hwn.jpg" alt="angry">
+                <button class="surprise-btn" id="sClose" style="margin-top:1rem;">Close</button>
+            `);
+            document.getElementById('sClose').addEventListener('click', () => modal.classList.remove('open'));
+        });
+
+        document.getElementById('sNah').addEventListener('click', () => {
+            showStage(`
+                <h2>REGISTRATION</h2>
+                <p>Enter your phone number to register</p>
+                <input class="surprise-input" id="sPhone" type="text" placeholder="Type your number..." maxlength="10">
+                <button class="surprise-submit" id="sSubmit">Register</button>
+            `);
+            document.getElementById('sSubmit').addEventListener('click', () => {
+                const phone = document.getElementById('sPhone').value.trim();
+                if (!phone) { alert('Please enter your number!'); return; }
+                showStage(`
+                    <h2>SURPRISEEEE &#129321;</h2>
+                    <img class="surprise-img" src="https://pbs.twimg.com/media/HL691HdWgAEiPfh?format=jpg&name=900x900" alt="surprise">
+                    <p>Thank you for playing with me &#128525;</p>
+                    <p>ODER OUR RESTUARANT???? &#128299;</p>
+                    <button class="surprise-btn" id="sClose2" style="margin-top:1rem;">Close</button>
+                `);
+                document.getElementById('sClose2').addEventListener('click', () => modal.classList.remove('open'));
+            });
+        });
+    }
+
+    // Wire header surprise button
+    const heroBtn = document.getElementById('heroSurprise');
+    if (heroBtn) heroBtn.addEventListener('click', openModal);
+}

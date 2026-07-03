@@ -273,6 +273,7 @@
       align-items: center;
       justify-content: center;
       transition: background 0.2s, transform 0.2s;
+      position: relative;
     }
     .order-fab-toggle:hover {
       background: #a8e6a8;
@@ -556,15 +557,568 @@
       opacity: 0.75;
       line-height: 1.6;
     }
+    header .hero-instruct {
+      font-size: 0.85rem;
+      color: #6B2D5B;
+      font-weight: 700;
+      padding: 6px 18px;
+      border: 2px solid #a05060;
+      border-radius: 30px;
+      display: inline-block;
+      background: rgba(255,255,255,0.5);
+      box-shadow: 0 0 0 3px rgba(248,200,220,0.3);
+    }
+    .hero-actions {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-surprise {
+      padding: 6px 18px;
+      border: 2px solid #a05060;
+      border-radius: 30px;
+      background: #f8c8dc;
+      color: #6B2D5B;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-surprise:hover {
+      background: #f0b0c8;
+      transform: scale(1.05);
+    }
+
+    /* Left meta (cuisine/origin + badge stacked) */
+    .left-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+    }
+    .left-meta .badge {
+      align-self: flex-start;
+    }
+
+    /* Cart badge on FAB */
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ff4757;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(255,71,87,0.4);
+    }
+
+    /* Dark mode toggle */
+    .dark-toggle {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #a05060;
+      background: #fff;
+      color: #a05060;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      z-index: 100;
+    }
+    .dark-toggle:hover {
+      background: #a05060;
+      color: #fff;
+    }
+
+    /* Dark mode theme (midnight blue) */
+    body.dark-mode {
+      background: #0a0e27;
+      color: #b8c4d8;
+    }
+    body.dark-mode header {
+      background: linear-gradient(135deg, #1a1f3a, #121638);
+      border-bottom-color: #2a2f4a;
+    }
+    body.dark-mode header h1 {
+      color: #a8b8e0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    }
+    body.dark-mode header p {
+      color: #7a8aaa;
+    }
+    body.dark-mode header .hero-instruct {
+      color: #a8b8e0;
+    }
+    body.dark-mode header .hero-instruct {
+      color: #a8b8e0;
+      border-color: #a8b8e0;
+      background: rgba(26,31,58,0.6);
+      box-shadow: 0 0 0 3px rgba(168,184,224,0.2);
+    }
+    body.dark-mode .hero-surprise {
+      border-color: #a8b8e0;
+      background: #1a2f4a;
+      color: #a8b8e0;
+    }
+    body.dark-mode .hero-surprise:hover {
+      background: #2a3f5a;
+    }
+    body.dark-mode .menu-card {
+      background: #161b36;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    body.dark-mode .menu-card .info h3 {
+      color: #c8d4e8;
+    }
+    body.dark-mode .menu-card .info .meta span {
+      color: #7a8aaa;
+    }
+    body.dark-mode .price {
+      color: #e8849a;
+    }
+    body.dark-mode .badge.veg {
+      background: #1a3a2a;
+      color: #6ac48a;
+    }
+    body.dark-mode .badge.nonveg {
+      background: #3a1a2a;
+      color: #e8849a;
+    }
+    body.dark-mode .details {
+      border-top-color: #2a2f4a;
+    }
+    body.dark-mode .ingredients-list {
+      color: #7a8aaa;
+    }
+    body.dark-mode .ingredients-list strong {
+      color: #e8849a;
+    }
+    body.dark-mode .backstory-text {
+      color: #7a8aaa;
+    }
+    body.dark-mode .backstory-text strong {
+      color: #6ac48a;
+    }
+    body.dark-mode .backstory-text p {
+      color: #6a7a9a;
+    }
+    body.dark-mode .card-footer {
+      border-top-color: #2a2f4a;
+    }
+    body.dark-mode .action-btn {
+      color: #7a8aaa;
+    }
+    body.dark-mode .action-btn:hover {
+      color: #e8849a;
+      background: #1e2340;
+    }
+    body.dark-mode .action-btn.like-btn.active {
+      color: #ff6b7a;
+      background: #2a1a2a;
+    }
+    body.dark-mode .action-btn.bookmark-btn.active {
+      color: #ffb840;
+      background: #2a2a1a;
+    }
+    body.dark-mode .order-fab-toggle {
+      background: #1a2f4a;
+      color: #7ab8e0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    body.dark-mode .order-fab-toggle:hover {
+      background: #1a3f5a;
+    }
+    body.dark-mode .q-fab-toggle {
+      background: #1e2340;
+      color: #a8b8e0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    body.dark-mode .q-fab-toggle:hover {
+      background: #2a2f4a;
+    }
+    body.dark-mode .order-modal-content {
+      background: #161b36;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    body.dark-mode .order-modal-header {
+      background: linear-gradient(135deg, #1a1f3a, #2a1a2a);
+    }
+    body.dark-mode .order-modal-header h2 {
+      color: #a8b8e0;
+    }
+    body.dark-mode .close-btn {
+      color: #7a8aaa;
+    }
+    body.dark-mode .close-btn:hover {
+      color: #e8849a;
+    }
+    body.dark-mode .order-modal-footer {
+      background: #121638;
+      border-top-color: #2a2f4a;
+    }
+    body.dark-mode .seat-btn {
+      background: #0a0e27;
+      border-color: #6ac48a;
+      color: #6ac48a;
+    }
+    body.dark-mode .seat-btn:hover {
+      background: #6ac48a;
+      color: #0a0e27;
+    }
+    body.dark-mode .seat-num {
+      color: #c8d4e8;
+    }
+    body.dark-mode .total-section span {
+      color: #7a8aaa;
+    }
+    body.dark-mode .total-section .total-price {
+      color: #6ac48a;
+    }
+    body.dark-mode .dark-toggle {
+      border-color: #a8b8e0;
+      background: #1a1f3a;
+      color: #a8b8e0;
+    }
+    body.dark-mode .dark-toggle:hover {
+      background: #a8b8e0;
+      color: #0a0e27;
+    }
+    body.dark-mode footer {
+      color: #4a5a7a;
+    }
+    body.dark-mode .surprise-btn {
+      border-color: #a8b8e0;
+      background: #1a1f3a;
+      color: #a8b8e0;
+    }
+    body.dark-mode .surprise-btn:hover {
+      background: #a8b8e0;
+      color: #0a0e27;
+    }
+    body.dark-mode .surprise-content {
+      background: #161b36;
+    }
+    body.dark-mode .surprise-content h2 {
+      color: #c8d4e8;
+    }
+    body.dark-mode .surprise-content p {
+      color: #7a8aaa;
+    }
+    body.dark-mode .surprise-input {
+      background: #0a0e27;
+      border-color: #2a2f4a;
+      color: #b8c4d8;
+    }
+    body.dark-mode .surprise-input:focus {
+      border-color: #a8b8e0;
+    }
+    body.dark-mode .surprise-submit {
+      background: #a8b8e0;
+      color: #0a0e27;
+    }
+    body.dark-mode .detail-content {
+      background: #161b36;
+    }
+    body.dark-mode .detail-body h2 {
+      color: #c8d4e8;
+    }
+    body.dark-mode .detail-cuisine {
+      color: #7a8aaa;
+    }
+    body.dark-mode .detail-price {
+      color: #e8849a;
+    }
+    body.dark-mode .detail-section strong {
+      color: #e8849a;
+    }
+    body.dark-mode .detail-section p {
+      color: #7a8aaa;
+    }
+    body.dark-mode .detail-close {
+      background: rgba(22,27,54,0.9);
+      color: #7a8aaa;
+    }
+    body.dark-mode .detail-close:hover {
+      background: #1a1f3a;
+      color: #e8849a;
+    }
+
+    /* Cute scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fcf0f5;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #f8c8dc, #c1f0c1);
+      border-radius: 10px;
+      border: 2px solid #fcf0f5;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #f0b0c8, #a8e6a8);
+    }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #f8c8dc #fcf0f5;
+    }
+
+    /* Surprise modal */
+    .surprise-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .surprise-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .surprise-content {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      transform: scale(0.9);
+      transition: transform 0.3s;
+    }
+    .surprise-overlay.open .surprise-content {
+      transform: scale(1);
+    }
+    .surprise-content h2 {
+      color: #6B2D5B;
+      margin-bottom: 1rem;
+    }
+    .surprise-content p {
+      color: #666;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .surprise-btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .surprise-btn {
+      padding: 10px 28px;
+      border-radius: 30px;
+      border: 2px solid #a05060;
+      background: #fff;
+      color: #a05060;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .surprise-btn:hover {
+      background: #a05060;
+      color: #fff;
+    }
+    .surprise-input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #f0d0e0;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      text-align: center;
+      margin: 0.5rem 0;
+      outline: none;
+    }
+    .surprise-input:focus {
+      border-color: #a05060;
+    }
+    .surprise-submit {
+      padding: 10px 28px;
+      border-radius: 30px;
+      border: none;
+      background: #a05060;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .surprise-submit:hover {
+      background: #803040;
+    }
+    .surprise-img {
+      max-width: 100%;
+      max-height: 250px;
+      border-radius: 12px;
+      margin: 0.5rem 0;
+      object-fit: contain;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Detail modal */
+    .detail-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      z-index: 2001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .detail-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .detail-content {
+      background: #fff;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+      transform: scale(0.9);
+      transition: transform 0.3s;
+    }
+    .detail-overlay.open .detail-content {
+      transform: scale(1);
+    }
+    .detail-content img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
+      display: block;
+    }
+    .detail-body {
+      padding: 1.5rem;
+    }
+    .detail-body h2 {
+      font-size: 1.6rem;
+      color: #333;
+      margin-bottom: 0.3rem;
+    }
+    .detail-cuisine {
+      font-size: 0.9rem;
+      color: #999;
+      margin-bottom: 0.5rem;
+    }
+    .detail-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #a05060;
+      margin-bottom: 1rem;
+    }
+    .detail-section {
+      margin-bottom: 1rem;
+    }
+    .detail-section strong {
+      color: #a05060;
+      display: block;
+      margin-bottom: 0.3rem;
+      font-size: 0.9rem;
+    }
+    .detail-section p {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .detail-close {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: rgba(255,255,255,0.9);
+      color: #999;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 0 0 20px 20px;
+      transition: all 0.2s;
+    }
+    .detail-close:hover {
+      background: #fff;
+      color: #a05060;
+    }
+
+    /* Seat counter */
+    .seat-counter {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 0.3rem;
+    }
+    .seat-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #3a7a3a;
+      background: #fff;
+      color: #3a7a3a;
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .seat-btn:hover {
+      background: #3a7a3a;
+      color: #fff;
+    }
+    .seat-num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #555;
+      min-width: 30px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <header>
+    <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">🌙</button>
     <h1>Kyden's Kitchen</h1>
     <p>Authentic flavors from around the world</p>
     <p class="description">
       Welcome to Kyden's Kitchen, where culinary traditions meet modern taste. We serve a handpicked selection of authentic dishes prepared daily by our master chefs using fresh, high-quality ingredients sourced from their regions of origin. Whether you are craving classic Italian pizza, traditional Japanese ramen, or rich Indian butter chicken, we bring the flavors of the world directly to your table. Join us for an unforgettable dining journey.
     </p>
+    <div class="hero-actions">
+      <p class="hero-instruct">Book Your Table & Pre-Order Your Meals</p>
+      <button class="hero-surprise" id="heroSurprise">🎲 Surprise</button>
+    </div>
   </header>
 
   <!-- Summary Review Popup Modal Window -->
@@ -575,7 +1129,7 @@
         <button class="close-btn" id="closeSummaryModal">&times;</button>
       </div>
       <div class="order-modal-body">
-        <p class="reservation-info">Reserved under: <strong id="reviewReserveName"></strong></p>
+        <p class="reservation-info">Reserved under: <strong id="reviewReserveName"></strong> · <span id="reviewSeats">1</span> seat(s)</p>
         <div class="review-items-list" id="reviewItemsList"></div>
         <div class="review-total-row">
           <span>Total Price:</span>
@@ -610,31 +1164,24 @@
     </div>
   </div>
 
-  <!-- Order in Advance FAB -->
+  <!-- Order FAB with cart badge -->
   <div class="order-fab">
     <button class="order-fab-toggle" id="orderToggle" aria-label="Order in Advance">
       <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      <span class="cart-badge" id="cartBadge">0</span>
     </button>
   </div>
 
-  <!-- Order Popup Modal Window -->
-  <div class="order-modal" id="orderModal">
-    <div class="order-modal-content">
-      <div class="order-modal-header">
-        <h2>Order in Advance</h2>
-        <button class="close-btn" id="closeOrderModal">&times;</button>
-      </div>
-      <div class="order-modal-body">
-        <div class="order-items-list" id="orderItemsList"></div>
-      </div>
-      <div class="order-modal-footer">
-        <div class="total-section">
-          <span>Total:</span>
-          <span class="total-price" id="orderTotalPrice">$0.00</span>
-        </div>
-        <button class="confirm-order-btn" id="confirmOrderBtn">Confirm Order</button>
-      </div>
+  <!-- Surprise Modal -->
+  <div class="surprise-overlay" id="surpriseModal">
+    <div class="surprise-content">
+      <div id="surpriseStage"></div>
     </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="detail-overlay" id="detailModal">
+    <div class="detail-content" id="detailContent"></div>
   </div>
 
   <!-- Payment Popup Modal Window -->
@@ -648,6 +1195,14 @@
         <div class="input-group" style="margin-bottom: 1.2rem;">
           <label for="reserveName" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #555;">Reserved Name:</label>
           <input type="text" id="reserveName" placeholder="Enter your name" style="width: 100%; padding: 10px; border: 1px solid #f0d0e0; border-radius: 8px; font-family: inherit; font-size: 14px; color: #555;">
+        </div>
+        <div class="input-group" style="margin-bottom: 1.2rem;">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #555;">Reserved Seats:</label>
+          <div class="seat-counter">
+            <button class="seat-btn" id="seatDec">−</button>
+            <span class="seat-num" id="seatNum">1</span>
+            <button class="seat-btn" id="seatInc">+</button>
+          </div>
         </div>
         <div class="deposit-summary" style="background: #fdf2f6; border-radius: 12px; padding: 1rem; margin-bottom: 1.2rem; border: 1px solid #f8c8dc;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
@@ -692,7 +1247,24 @@
   <script src="my-object.js"></script>
   <script>
     renderMenu('menuGrid')
+    setupOrderSystem()
+    setupSurprise()
 
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle')
+    const savedDark = localStorage.getItem('darkMode')
+    if (savedDark === 'true') {
+      document.body.classList.add('dark-mode')
+      darkToggle.textContent = '☀️'
+    }
+    darkToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode')
+      const isDark = document.body.classList.contains('dark-mode')
+      localStorage.setItem('darkMode', isDark)
+      darkToggle.textContent = isDark ? '☀️' : '🌙'
+    })
+
+    // Q&A toggle
     const toggle = document.getElementById('qToggle')
     const form = document.getElementById('qForm')
     const submit = document.getElementById('qSubmit')
